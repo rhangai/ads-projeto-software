@@ -1,0 +1,131 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "011df156-287a-4a00-a399-daed488bdee1",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "cao_fila": {
+      "name": "cao_fila",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "nome_cao": {
+          "name": "nome_cao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "nome_tutor": {
+          "name": "nome_tutor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "telefone_tutor": {
+          "name": "telefone_tutor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "altura_cm": {
+          "name": "altura_cm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "comprimento_cm": {
+          "name": "comprimento_cm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'aguardando'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "cao_status_valido": {
+          "name": "cao_status_valido",
+          "value": "\"cao_fila\".\"status\" IN ('aguardando', 'em_montagem', 'entregue')"
+        },
+        "cao_medidas_positivas": {
+          "name": "cao_medidas_positivas",
+          "value": "\"cao_fila\".\"altura_cm\" > 0 AND \"cao_fila\".\"comprimento_cm\" > 0"
+        }
+      }
+    },
+    "material_estoque": {
+      "name": "material_estoque",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "nome_material": {
+          "name": "nome_material",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "categoria_material": {
+          "name": "categoria_material",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "saldo_disponivel": {
+          "name": "saldo_disponivel",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "saldo_nao_negativo": {
+          "name": "saldo_nao_negativo",
+          "value": "\"material_estoque\".\"saldo_disponivel\" >= 0"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}
