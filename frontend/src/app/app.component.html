@@ -1,0 +1,35 @@
+<!-- Moldura mobile-first: no celular ocupa a tela toda; no desktop vira uma coluna de 448px. -->
+<div class="relative mx-auto flex h-dvh max-w-md flex-col overflow-hidden bg-gray-50 shadow-xl">
+  <app-toast />
+
+  <!-- Cada página traz o próprio cabeçalho; esta área é a única que rola. -->
+  <main class="flex min-h-0 flex-1 flex-col overflow-y-auto">
+    <router-outlet />
+  </main>
+
+  <nav
+    class="border-t border-gray-300 bg-white pb-[env(safe-area-inset-bottom)]"
+    aria-label="Navegação principal"
+  >
+    <ul class="grid grid-cols-3">
+      @for (item of navegacao; track item.rota) {
+        <li>
+          <a
+            [routerLink]="item.rota"
+            routerLinkActive="text-blue-700 bg-blue-50 [&>span:first-child]:bg-blue-100"
+            [routerLinkActiveOptions]="{ exact: false }"
+            ariaCurrentWhenActive="page"
+            class="flex min-h-[64px] min-w-[44px] flex-col items-center justify-center gap-1 px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
+          >
+            <span class="flex h-8 w-14 items-center justify-center rounded-full">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="item.icone" />
+              </svg>
+            </span>
+            <span>{{ item.rotulo }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+</div>
