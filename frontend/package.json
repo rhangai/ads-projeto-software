@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "ng": "ng",
+    "dev": "ng serve",
     "start": "ng serve",
-    "build": "ng build"
+    "build": "ng build",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit"
   },
   "dependencies": {
     "@angular/common": "^18.2.0",

@@ -1,0 +1,11 @@
+packages:
+  - backend
+  - frontend
+
+# pnpm só roda scripts de instalação dos pacotes liberados aqui.
+allowBuilds:
+  better-sqlite3: true # driver nativo do SQLite (API)
+  esbuild: true # build do Angular e tsx
+  lmdb: true # cache do build do Angular
+  msgpackr-extract: true # dependência do lmdb
+  nice-napi: false # opcional; o Angular funciona sem

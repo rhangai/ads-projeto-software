@@ -11,26 +11,30 @@ Gestão da fila de cães que aguardam cadeira de rodas de PVC, do estoque de pe�
 
 ## Como rodar
 
-Requer Node 20+.
+Monorepo pnpm com dois pacotes: `backend` (`cao-saci-api`) e `frontend` (`cao-saci-web`).
+Requer Node 20+ e pnpm 11.
 
 ```bash
-# 1. API (porta 3000)
-cd backend
-npm install
-npm run db:seed      # cria o banco cao-saci.db, aplica a migration e insere dados de exemplo
-npm run dev
-
-# 2. Front (porta 4200, com proxy /api -> localhost:3000)
-cd frontend
-npm install
-npm start
+pnpm install
+pnpm dev
 ```
+
+O `pnpm dev` cria o banco `backend/cao-saci.db` com dados de exemplo (só se estiver vazio) e sobe
+a API (porta 3000) e o front (porta 4200, com proxy `/api` → `localhost:3000`) juntos.
 
 Abra http://localhost:4200. No desktop o app aparece como uma coluna de celular; use o modo
 dispositivo do DevTools para ver em tela cheia.
 
-Mudou o `schema.ts`? Rode `npm run db:generate` no `backend/` para gerar a nova migration.
-Ela é aplicada automaticamente quando a API sobe.
+| Comando na raiz | O que faz |
+| --- | --- |
+| `pnpm dev` | Seed + API + front em modo desenvolvimento |
+| `pnpm build` | Build de produção do front |
+| `pnpm typecheck` | Checa os tipos dos dois pacotes |
+| `pnpm db:generate` | Gera migration depois de mudar o `schema.ts` (aplicada ao subir a API) |
+| `pnpm db:seed` | Insere os dados de exemplo |
+
+Para rodar um pacote só: `pnpm --filter cao-saci-api dev` ou `pnpm --filter cao-saci-web dev`.
+Para recomeçar o banco do zero, apague `backend/cao-saci.db*`.
 
 ## API
 
