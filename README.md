@@ -15,26 +15,33 @@ Monorepo pnpm com dois pacotes: `backend` (`cao-saci-api`) e `frontend` (`cao-sa
 Requer Node 20+ e pnpm 11.
 
 ```bash
-pnpm install
-pnpm dev
+pnpm run setup   # instala dependências, cria o banco e insere dados de exemplo
+pnpm dev         # sobe API (porta 3000) e front (porta 4200) juntos
 ```
 
-O `pnpm dev` cria o banco `backend/cao-saci.db` com dados de exemplo (só se estiver vazio) e sobe
-a API (porta 3000) e o front (porta 4200, com proxy `/api` → `localhost:3000`) juntos.
+Use `pnpm run setup`, e não `pnpm setup`: este último é um comando nativo do pnpm (configura o
+`PNPM_HOME`) e ignora o script. O setup pode ser rodado de novo sem problema: só aplica migrations
+pendentes e só insere os dados de exemplo se o banco estiver vazio.
+
+O front usa proxy `/api` → `localhost:3000`.
 
 Abra http://localhost:4200. No desktop o app aparece como uma coluna de celular; use o modo
 dispositivo do DevTools para ver em tela cheia.
 
 | Comando na raiz | O que faz |
 | --- | --- |
-| `pnpm dev` | Seed + API + front em modo desenvolvimento |
+| `pnpm run setup` | `pnpm install` + `db:setup` |
+| `pnpm dev` | API + front em modo desenvolvimento |
 | `pnpm build` | Build de produção do front |
 | `pnpm typecheck` | Checa os tipos dos dois pacotes |
-| `pnpm db:generate` | Gera migration depois de mudar o `schema.ts` (aplicada ao subir a API) |
-| `pnpm db:seed` | Insere os dados de exemplo |
+| `pnpm db:setup` | `db:migrate` + `db:seed` |
+| `pnpm db:migrate` | Cria o banco se não existir e aplica as migrations pendentes |
+| `pnpm db:seed` | Insere os dados de exemplo (só com o banco vazio) |
+| `pnpm db:reset` | **Apaga o banco** e roda o `db:setup` de novo |
+| `pnpm db:generate` | Gera migration depois de mudar o `schema.ts` |
 
 Para rodar um pacote só: `pnpm --filter cao-saci-api dev` ou `pnpm --filter cao-saci-web dev`.
-Para recomeçar o banco do zero, apague `backend/cao-saci.db*`.
+O banco fica em `backend/cao-saci.db` (mude com a variável `DB_FILE`).
 
 ## API
 
