@@ -1,109 +1,129 @@
-<header class="sticky top-0 z-10 flex items-center gap-2 bg-blue-700 px-2 py-3 text-white shadow">
+<header class="sticky top-0 z-10 flex items-center gap-2 bg-green-900 px-2 py-3 text-white shadow-md">
   <a
     routerLink="/fila"
-    class="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg hover:bg-blue-800"
-    aria-label="Voltar para a fila"
+    class="flex min-h-[48px] min-w-[48px] items-center justify-center gap-1 rounded-xl px-2 font-bold hover:bg-green-800"
   >
-    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+    <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
       <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
     </svg>
+    <span>Voltar</span>
   </a>
-  <h1 class="text-xl font-bold">Novo cadastro</h1>
+  <h1 class="font-titulo text-2xl font-extrabold">Novo cadastro</h1>
 </header>
 
-<form [formGroup]="form" (ngSubmit)="salvar()" class="flex flex-col gap-5 px-4 pb-8 pt-5" novalidate>
-  <fieldset class="flex flex-col gap-4">
-    <legend class="mb-1 text-base font-bold text-gray-900">Cão</legend>
+<form [formGroup]="form" (ngSubmit)="salvar()" class="flex flex-col gap-6 px-4 pb-10 pt-5" novalidate>
+  <fieldset class="flex flex-col gap-5 rounded-2xl border-2 border-stone-300 bg-white p-4">
+    <legend class="px-1 font-titulo text-xl font-extrabold text-tinta">Sobre o cão</legend>
 
-    <div class="flex flex-col gap-1">
-      <label for="nome_cao" class="font-semibold text-gray-900">Nome do cão</label>
+    <div class="flex flex-col gap-1.5">
+      <label for="nome_cao" class="text-lg font-bold text-tinta">Nome do cão</label>
       <input
         id="nome_cao"
         formControlName="nome_cao"
         autocomplete="off"
-        class="min-h-[44px] rounded-lg border-2 border-gray-400 bg-white px-3 text-base text-gray-900 focus:border-blue-700"
+        class="min-h-[52px] rounded-xl border-2 border-stone-600 bg-white px-4 text-lg text-tinta focus:border-green-800"
+        [class.!border-red-800]="invalido('nome_cao')"
         [attr.aria-invalid]="invalido('nome_cao')"
         aria-describedby="erro-nome_cao"
       />
       @if (invalido('nome_cao')) {
-        <p id="erro-nome_cao" class="text-sm font-medium text-red-800">⚠ Informe o nome do cão.</p>
+        <p id="erro-nome_cao" class="flex items-center gap-2 text-base font-bold text-red-900">
+          <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+          Escreva o nome do cão.
+        </p>
       }
     </div>
 
-    <div class="grid grid-cols-2 gap-3">
-      <div class="flex flex-col gap-1">
-        <label for="altura_cm" class="font-semibold text-gray-900">Altura (cm)</label>
-        <input
-          id="altura_cm"
-          type="number"
-          inputmode="numeric"
-          min="5"
-          max="150"
-          formControlName="altura_cm"
-          class="min-h-[44px] rounded-lg border-2 border-gray-400 bg-white px-3 text-base tabular-nums text-gray-900 focus:border-blue-700"
-          [attr.aria-invalid]="invalido('altura_cm')"
-          aria-describedby="ajuda-altura erro-altura_cm"
-        />
-        <p id="ajuda-altura" class="text-xs text-gray-700">Do chão até o dorso.</p>
-        @if (invalido('altura_cm')) {
-          <p id="erro-altura_cm" class="text-sm font-medium text-red-800">⚠ Entre 5 e 150 cm.</p>
-        }
-      </div>
+    <div class="flex flex-col gap-1.5">
+      <label for="altura_cm" class="text-lg font-bold text-tinta">Altura, em centímetros</label>
+      <p id="ajuda-altura" class="text-base text-stone-800">Meça do chão até o alto das costas.</p>
+      <input
+        id="altura_cm"
+        type="number"
+        inputmode="numeric"
+        min="5"
+        max="150"
+        placeholder="Ex.: 40"
+        formControlName="altura_cm"
+        class="min-h-[52px] rounded-xl border-2 border-stone-600 bg-white px-4 text-lg tabular-nums text-tinta placeholder:text-stone-600 focus:border-green-800"
+        [class.!border-red-800]="invalido('altura_cm')"
+        [attr.aria-invalid]="invalido('altura_cm')"
+        aria-describedby="ajuda-altura erro-altura_cm"
+      />
+      @if (invalido('altura_cm')) {
+        <p id="erro-altura_cm" class="flex items-center gap-2 text-base font-bold text-red-900">
+          <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+          Use um número entre 5 e 150.
+        </p>
+      }
+    </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="comprimento_cm" class="font-semibold text-gray-900">Comprimento (cm)</label>
-        <input
-          id="comprimento_cm"
-          type="number"
-          inputmode="numeric"
-          min="10"
-          max="200"
-          formControlName="comprimento_cm"
-          class="min-h-[44px] rounded-lg border-2 border-gray-400 bg-white px-3 text-base tabular-nums text-gray-900 focus:border-blue-700"
-          [attr.aria-invalid]="invalido('comprimento_cm')"
-          aria-describedby="ajuda-comprimento erro-comprimento_cm"
-        />
-        <p id="ajuda-comprimento" class="text-xs text-gray-700">Do peito ao quadril.</p>
-        @if (invalido('comprimento_cm')) {
-          <p id="erro-comprimento_cm" class="text-sm font-medium text-red-800">⚠ Entre 10 e 200 cm.</p>
-        }
-      </div>
+    <div class="flex flex-col gap-1.5">
+      <label for="comprimento_cm" class="text-lg font-bold text-tinta">Comprimento, em centímetros</label>
+      <p id="ajuda-comprimento" class="text-base text-stone-800">Meça do peito até o quadril.</p>
+      <input
+        id="comprimento_cm"
+        type="number"
+        inputmode="numeric"
+        min="10"
+        max="200"
+        placeholder="Ex.: 60"
+        formControlName="comprimento_cm"
+        class="min-h-[52px] rounded-xl border-2 border-stone-600 bg-white px-4 text-lg tabular-nums text-tinta placeholder:text-stone-600 focus:border-green-800"
+        [class.!border-red-800]="invalido('comprimento_cm')"
+        [attr.aria-invalid]="invalido('comprimento_cm')"
+        aria-describedby="ajuda-comprimento erro-comprimento_cm"
+      />
+      @if (invalido('comprimento_cm')) {
+        <p id="erro-comprimento_cm" class="flex items-center gap-2 text-base font-bold text-red-900">
+          <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+          Use um número entre 10 e 200.
+        </p>
+      }
     </div>
   </fieldset>
 
-  <fieldset class="flex flex-col gap-4">
-    <legend class="mb-1 text-base font-bold text-gray-900">Tutor</legend>
+  <fieldset class="flex flex-col gap-5 rounded-2xl border-2 border-stone-300 bg-white p-4">
+    <legend class="px-1 font-titulo text-xl font-extrabold text-tinta">Sobre o tutor</legend>
 
-    <div class="flex flex-col gap-1">
-      <label for="nome_tutor" class="font-semibold text-gray-900">Nome do tutor</label>
+    <div class="flex flex-col gap-1.5">
+      <label for="nome_tutor" class="text-lg font-bold text-tinta">Nome do tutor</label>
       <input
         id="nome_tutor"
         formControlName="nome_tutor"
         autocomplete="name"
-        class="min-h-[44px] rounded-lg border-2 border-gray-400 bg-white px-3 text-base text-gray-900 focus:border-blue-700"
+        class="min-h-[52px] rounded-xl border-2 border-stone-600 bg-white px-4 text-lg text-tinta focus:border-green-800"
+        [class.!border-red-800]="invalido('nome_tutor')"
         [attr.aria-invalid]="invalido('nome_tutor')"
         aria-describedby="erro-nome_tutor"
       />
       @if (invalido('nome_tutor')) {
-        <p id="erro-nome_tutor" class="text-sm font-medium text-red-800">⚠ Informe o nome do tutor.</p>
+        <p id="erro-nome_tutor" class="flex items-center gap-2 text-base font-bold text-red-900">
+          <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+          Escreva o nome do tutor.
+        </p>
       }
     </div>
 
-    <div class="flex flex-col gap-1">
-      <label for="telefone_tutor" class="font-semibold text-gray-900">Telefone</label>
+    <div class="flex flex-col gap-1.5">
+      <label for="telefone_tutor" class="text-lg font-bold text-tinta">Telefone com DDD</label>
       <input
         id="telefone_tutor"
         type="tel"
         inputmode="tel"
         autocomplete="tel"
-        placeholder="(11) 90000-0000"
+        placeholder="Ex.: (11) 90000-0000"
         formControlName="telefone_tutor"
-        class="min-h-[44px] rounded-lg border-2 border-gray-400 bg-white px-3 text-base text-gray-900 placeholder:text-gray-600 focus:border-blue-700"
+        class="min-h-[52px] rounded-xl border-2 border-stone-600 bg-white px-4 text-lg text-tinta placeholder:text-stone-600 focus:border-green-800"
+        [class.!border-red-800]="invalido('telefone_tutor')"
         [attr.aria-invalid]="invalido('telefone_tutor')"
         aria-describedby="erro-telefone_tutor"
       />
       @if (invalido('telefone_tutor')) {
-        <p id="erro-telefone_tutor" class="text-sm font-medium text-red-800">⚠ Informe um telefone com DDD.</p>
+        <p id="erro-telefone_tutor" class="flex items-center gap-2 text-base font-bold text-red-900">
+          <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+          Escreva o telefone com DDD.
+        </p>
       }
     </div>
   </fieldset>
@@ -111,8 +131,11 @@
   <button
     type="submit"
     [disabled]="enviando()"
-    class="min-h-[52px] min-w-[44px] rounded-xl bg-blue-700 px-4 text-lg font-bold text-white shadow hover:bg-blue-800 disabled:bg-gray-500"
+    class="flex min-h-[60px] min-w-[44px] items-center justify-center gap-2 rounded-2xl bg-green-800 px-4 text-xl font-bold text-white shadow-md hover:bg-green-900 disabled:bg-stone-300 disabled:text-stone-800 disabled:shadow-none"
   >
-    {{ enviando() ? 'Salvando…' : 'Cadastrar na fila' }}
+    <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+    </svg>
+    {{ enviando() ? 'Salvando…' : 'Colocar na fila' }}
   </button>
 </form>

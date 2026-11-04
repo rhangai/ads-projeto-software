@@ -17,6 +17,11 @@ export class FilaComponent implements OnInit {
   readonly carregando = signal(true);
   readonly erro = signal<string | null>(null);
 
+  /** "(11) 90000-0001" -> "tel:11900000001" */
+  linkTelefone(telefone: string): string {
+    return 'tel:' + telefone.replace(/\D/g, '');
+  }
+
   ngOnInit(): void {
     this.carregar();
   }

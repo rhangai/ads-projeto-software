@@ -3,9 +3,24 @@
 @tailwind utilities;
 
 @layer base {
-  /* Foco sempre visível para quem navega pelo teclado. */
+  /* Base de 18px: leitura em pé, ao ar livre. Medidas em px (como min-h-[44px]) não mudam. */
+  html {
+    font-size: 112.5%;
+  }
+
+  /* Foco sempre visível e grosso para quem navega pelo teclado. */
   :focus-visible {
-    @apply outline outline-4 outline-offset-2 outline-blue-700;
+    @apply outline outline-4 outline-offset-2 outline-sky-800;
+  }
+
+  /* Remove as setas do campo numérico: os botões − e + já fazem esse papel. */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
   }
 
   @media (prefers-reduced-motion: reduce) {

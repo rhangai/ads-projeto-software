@@ -10,6 +10,8 @@ const MSG_NEGATIVO = 'O saldo não pode ficar negativo.';
   selector: 'app-estoque',
   standalone: true,
   templateUrl: './estoque.component.html',
+  // Ocupa a altura toda para a barra "Salvar Ajuste" ficar presa ao rodapé.
+  host: { class: 'flex flex-1 flex-col' },
 })
 export class EstoqueComponent implements OnInit {
   private readonly api = inject(ApiService);
