@@ -2,12 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, mensagemDeErro } from '../../core/api.service';
 import { Cao } from '../../core/models';
+import { LogoComponent } from '../../shared/logo/logo.component';
 import { StatusTagComponent } from '../../shared/status-tag/status-tag.component';
 
 @Component({
   selector: 'app-fila',
   standalone: true,
-  imports: [RouterLink, StatusTagComponent],
+  imports: [RouterLink, StatusTagComponent, LogoComponent],
   templateUrl: './fila.component.html',
 })
 export class FilaComponent implements OnInit {

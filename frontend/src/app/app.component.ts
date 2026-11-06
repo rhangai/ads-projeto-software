@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { LogoComponent } from './shared/logo/logo.component';
 import { ToastComponent } from './shared/toast/toast.component';
 
 interface ItemNav {
@@ -11,7 +12,7 @@ interface ItemNav {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastComponent, LogoComponent],
   templateUrl: './app.component.html',
 })
 export class AppComponent {

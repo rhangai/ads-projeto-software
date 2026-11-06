@@ -1,12 +1,15 @@
-<header class="sticky top-0 z-10 bg-green-900 px-4 pb-4 pt-3 text-white shadow-md">
-  <h1 class="font-titulo text-2xl font-extrabold">Estoque Físico</h1>
-  <p class="text-base text-green-50">Peças que chegaram ou saíram</p>
+<header class="sticky top-0 z-10 bg-green-900 px-4 pb-4 pt-3 text-white shadow-md md:px-8 lg:py-5">
+  <div class="mx-auto w-full max-w-6xl">
+    <h1 class="font-titulo text-2xl font-extrabold lg:text-3xl">Estoque Físico</h1>
+    <p class="text-base text-green-50">Peças que chegaram ou saíram</p>
+  </div>
 </header>
 
-<div class="flex flex-1 flex-col gap-4 px-4 pt-5">
+<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 pt-5 md:px-8 md:pt-8">
   @if (carregando()) {
     <p class="py-10 text-center text-lg text-stone-800" role="status">Carregando estoque…</p>
   } @else {
+    <div class="grid gap-4 md:grid-cols-2">
     @for (m of materiais(); track m.id) {
       <section class="rounded-2xl border-2 border-stone-300 bg-white p-4 shadow-sm" [attr.aria-labelledby]="'mat-' + m.id">
         <div class="flex items-start gap-3">
@@ -71,18 +74,20 @@
         </div>
       </section>
     } @empty {
-      <div class="rounded-2xl border-2 border-dashed border-stone-500 bg-white p-6 text-center text-lg text-tinta">
+      <div class="rounded-2xl border-2 border-dashed border-stone-500 bg-white p-6 text-center text-lg text-tinta md:col-span-2">
         Nenhuma peça cadastrada ainda. Rode <code class="font-bold">pnpm db:setup</code> na raiz do projeto.
       </div>
     }
+    </div>
 
     <!-- Barra de salvar presa ao rodapé da área rolável: sempre à vista do polegar. -->
-    <div class="sticky bottom-0 -mx-4 mt-auto border-t-2 border-stone-300 bg-gelo px-4 pb-4 pt-3">
+    <div class="sticky bottom-0 -mx-4 mt-auto flex border-t-2 border-stone-300 bg-gelo px-4 pb-4 pt-3 md:-mx-8 md:justify-end md:px-8">
+
       <button
         type="button"
         (click)="salvar()"
         [disabled]="salvando() || alterados().length === 0"
-        class="flex min-h-[60px] w-full min-w-[44px] items-center justify-center gap-2 rounded-2xl bg-green-800 px-4 text-xl font-bold text-white shadow-md hover:bg-green-900 disabled:bg-stone-300 disabled:text-stone-800 disabled:shadow-none"
+        class="flex min-h-[60px] w-full min-w-[44px] items-center justify-center gap-2 rounded-2xl bg-green-800 px-4 text-xl md:w-auto md:px-12 font-bold text-white shadow-md hover:bg-green-900 disabled:bg-stone-300 disabled:text-stone-800 disabled:shadow-none"
       >
         @if (salvando()) {
           Salvando…
