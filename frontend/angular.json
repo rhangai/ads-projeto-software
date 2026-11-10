@@ -22,7 +22,12 @@
           },
           "configurations": {
             "production": { "outputHashing": "all" },
-            "development": { "optimization": false, "extractLicenses": false, "sourceMap": true }
+            "development": { "optimization": false, "extractLicenses": false, "sourceMap": true },
+            "mock": {
+              "fileReplacements": [
+                { "replace": "src/environments/environment.ts", "with": "src/environments/environment.mock.ts" }
+              ]
+            }
           },
           "defaultConfiguration": "production"
         },
@@ -31,7 +36,8 @@
           "options": { "proxyConfig": "proxy.conf.json" },
           "configurations": {
             "production": { "buildTarget": "cao-saci-web:build:production" },
-            "development": { "buildTarget": "cao-saci-web:build:development" }
+            "development": { "buildTarget": "cao-saci-web:build:development" },
+            "mock": { "buildTarget": "cao-saci-web:build:development,mock" }
           },
           "defaultConfiguration": "development"
         }

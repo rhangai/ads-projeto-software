@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { environment } from '../environments/environment';
+import { restaurarDadosExemplo } from './mock/mock-api.interceptor';
 import { LogoComponent } from './shared/logo/logo.component';
 import { ToastComponent } from './shared/toast/toast.component';
 
@@ -16,6 +18,14 @@ interface ItemNav {
   templateUrl: './app.component.html',
 })
 export class AppComponent {
+  readonly modoMock = environment.mock;
+
+  /** Só no modo mock: recomeça com os dados de exemplo e recarrega as telas. */
+  restaurarExemplo(): void {
+    restaurarDadosExemplo();
+    location.reload();
+  }
+
   readonly navegacao: ItemNav[] = [
     {
       rota: '/fila',

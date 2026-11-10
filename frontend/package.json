@@ -7,6 +7,8 @@
     "dev": "ng serve",
     "start": "ng serve",
     "build": "ng build",
+    "dev:mock": "ng serve --configuration mock",
+    "build:mock": "ng build --configuration production,mock",
     "typecheck": "tsc -p tsconfig.app.json --noEmit"
   },
   "dependencies": {

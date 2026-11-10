@@ -32,6 +32,8 @@ dispositivo do DevTools para ver em tela cheia.
 | --- | --- |
 | `pnpm run setup` | `pnpm install` + `db:setup` |
 | `pnpm dev` | API + front em modo desenvolvimento |
+| `pnpm dev:mock` | Só o front, com API falsa no navegador (sem backend nem banco) |
+| `pnpm build:mock` | Site estático da demonstração em `frontend/dist/cao-saci-web/browser` |
 | `pnpm build` | Build de produção do front |
 | `pnpm typecheck` | Checa os tipos dos dois pacotes |
 | `pnpm db:setup` | `db:migrate` + `db:seed` |
@@ -42,6 +44,19 @@ dispositivo do DevTools para ver em tela cheia.
 
 Para rodar um pacote só: `pnpm --filter cao-saci-api dev` ou `pnpm --filter cao-saci-web dev`.
 O banco fica em `backend/cao-saci.db` (mude com a variável `DB_FILE`).
+
+## Modo demonstração (sem backend)
+
+`pnpm dev:mock` liga o interceptor `frontend/src/app/mock/mock-api.interceptor.ts`, que responde
+todas as chamadas `/api` no próprio navegador, com as mesmas regras e mensagens de erro da API.
+Os dados ficam no `localStorage` (chave `cao-saci:mock:v1`) e o botão "Restaurar dados de
+exemplo", na faixa amarela do topo, recomeça do zero.
+
+A regra de consumo está copiada no interceptor: se mudar em
+`backend/src/models/compatibilidade.ts`, mude lá também.
+
+Para publicar o `build:mock` (GitHub Pages, Netlify, Vercel…), configure o host para devolver o
+`index.html` em qualquer rota (fallback de SPA). Sem isso, recarregar em `/estoque` dá 404.
 
 ## API
 

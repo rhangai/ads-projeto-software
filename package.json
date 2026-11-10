@@ -5,7 +5,9 @@
   "scripts": {
     "setup": "pnpm install && pnpm db:setup",
     "dev": "pnpm --parallel --recursive run dev",
+    "dev:mock": "pnpm --filter cao-saci-web dev:mock",
     "build": "pnpm --recursive run build",
+    "build:mock": "pnpm --filter cao-saci-web build:mock",
     "typecheck": "pnpm --recursive run typecheck",
     "db:setup": "pnpm --filter cao-saci-api db:setup",
     "db:reset": "pnpm --filter cao-saci-api db:reset",
