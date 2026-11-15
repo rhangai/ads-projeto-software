@@ -1,5 +1,7 @@
 # Cão Saci — MVP
 
+[![Testes](https://github.com/rhangai/ads-projeto-software/actions/workflows/testes.yml/badge.svg)](https://github.com/rhangai/ads-projeto-software/actions/workflows/testes.yml)
+
 Gestão da fila de cães que aguardam cadeira de rodas de PVC, do estoque de peças e da triagem
 (quem da fila já pode receber a cadeira com o material disponível).
 
@@ -58,6 +60,11 @@ pnpm test:coverage    # o mesmo, com cobertura por pacote e o total do projeto
 | Front | Karma + Jasmine | Serviços, interceptor do modo demonstração, as telas (fila, cadastro, triagem, estoque), toast, etiquetas de status, logo e rotas. |
 
 Os relatórios em HTML ficam em `backend/coverage/index.html` e `frontend/coverage/index.html`.
+
+**No GitHub:** o workflow `.github/workflows/testes.yml` roda em todo PR e em todo push no `main`.
+Ele roda o typecheck, os testes com cobertura e os dois builds, e falha se a cobertura de instruções
+do projeto ficar abaixo de 90%. A tabela de cobertura aparece no resumo da execução, e os relatórios
+HTML ficam no artefato `cobertura`.
 O front precisa de Chrome ou Chromium; se o Karma não achar, informe o executável em `CHROME_BIN`.
 
 Ficam fora da medição só os pontos de entrada e scripts sem lógica própria (`server.ts`,

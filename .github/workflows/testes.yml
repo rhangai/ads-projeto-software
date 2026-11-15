@@ -1,0 +1,59 @@
+name: Testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Um push novo no mesmo branch/PR cancela a execução anterior, que ficou desatualizada.
+concurrency:
+  group: testes-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    name: Typecheck, testes com cobertura e build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Falha o pipeline se a cobertura de instruções do projeto cair abaixo disto.
+      COBERTURA_MINIMA: '90'
+    steps:
+      - uses: actions/checkout@v4
+
+      # Usa a versão do campo "packageManager" do package.json (pnpm 11).
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Instalar dependências
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # O Karma usa o Google Chrome que já vem no runner ubuntu-latest (variável CHROME_BIN).
+      - name: Testes com cobertura (API + front)
+        run: pnpm test:coverage
+
+      - name: Build
+        run: pnpm build
+
+      - name: Build do modo demonstração
+        run: pnpm build:mock
+
+      - name: Guardar relatórios de cobertura
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura
+          path: |
+            backend/coverage/
+            frontend/coverage/
+          retention-days: 14
