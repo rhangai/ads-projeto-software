@@ -9,13 +9,13 @@ describe('AppComponent (moldura e navegação)', () => {
     TestBed.configureTestingModule({ imports: [AppComponent], providers: [provideRouter(routes)] });
   });
 
-  it('tem a barra de navegação com as três telas', () => {
+  it('tem a barra de navegação com as telas e a página Sobre', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
     const links = Array.from(el.querySelectorAll('nav a'));
-    expect(links.map((a) => texto(a))).toEqual(['Fila', 'Triagem', 'Estoque']);
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/fila', '/triagem', '/estoque']);
+    expect(links.map((a) => texto(a))).toEqual(['Fila', 'Triagem', 'Estoque', 'Sobre']);
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/fila', '/triagem', '/estoque', '/sobre']);
     expect(el.querySelector('nav')?.getAttribute('aria-label')).toBe('Navegação principal');
   });
 
@@ -45,6 +45,7 @@ describe('AppComponent (moldura e navegação)', () => {
       ['fila/novo', 'NovoCaoComponent'],
       ['triagem', 'TriagemComponent'],
       ['estoque', 'EstoqueComponent'],
+      ['sobre', 'SobreComponent'],
     ]);
   });
 });

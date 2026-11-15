@@ -1,0 +1,133 @@
+<header class="sticky top-0 z-10 bg-green-900 px-4 pb-4 pt-3 text-white shadow-md md:px-8 lg:py-5">
+  <div class="mx-auto w-full max-w-3xl">
+    <h1 class="font-titulo text-2xl font-extrabold lg:text-3xl">Sobre o Cão Saci</h1>
+    <p class="text-base text-green-50">Cadeiras de rodas para cachorros mancos e pernetas</p>
+  </div>
+</header>
+
+<article class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 pb-12 pt-6 text-lg leading-relaxed text-tinta md:px-8 md:pt-10">
+  <!-- Abertura -->
+  <section class="flex flex-col items-start gap-5 sm:flex-row sm:items-center" aria-labelledby="titulo-abertura">
+    <span class="[&_svg]:h-28 [&_svg]:w-28"><app-logo /></span>
+    <div class="flex flex-col gap-3">
+      <h2 id="titulo-abertura" class="text-balance font-titulo text-3xl font-extrabold leading-tight">
+        Todo cachorro merece voltar a passear.
+      </h2>
+      <p>
+        O Cão Saci é uma iniciativa comunitária que monta cadeiras de rodas de PVC para
+        <strong>cachorros mancos e pernetas</strong>: cães que perderam uma pata, que arrastam as patas de trás
+        ou que já não conseguem sustentar o corpo sozinhos. A prioridade são animais resgatados e famílias de
+        baixa renda.
+      </p>
+    </div>
+  </section>
+
+  <!-- Nome -->
+  <section class="rounded-2xl border-2 border-amber-700 bg-amber-50 p-5" aria-labelledby="titulo-nome">
+    <h2 id="titulo-nome" class="font-titulo text-xl font-extrabold text-amber-950">Por que "Saci"?</h2>
+    <p class="mt-2 text-amber-950">
+      Por causa do Saci-Pererê, o personagem do folclore brasileiro que anda numa perna só e nem por isso
+      para quieto. É assim que a gente quer ver cada cachorro que passa por aqui.
+    </p>
+  </section>
+
+  <!-- A cadeira -->
+  <section class="flex flex-col gap-3" aria-labelledby="titulo-cadeira">
+    <h2 id="titulo-cadeira" class="font-titulo text-2xl font-extrabold">Como é a cadeira</h2>
+    <p>
+      Uma armação de <strong>canos de PVC</strong> no tamanho do cão, <strong>rodinhas</strong> no lugar das
+      patas que não apoiam mais e <strong>faixas de tecido</strong> que seguram o corpo. Tudo vem de material
+      reciclado e de doações.
+    </p>
+    <p>
+      Cada cadeira é feita sob medida para o cão que vai usá-la. Por isso o cadastro pede a altura (do chão até
+      o alto das costas) e o comprimento (do peito até o quadril): são essas medidas que dizem quanto cano
+      cortar.
+    </p>
+  </section>
+
+  <!-- Como o sistema ajuda: os passos são uma sequência real -->
+  <section class="flex flex-col gap-4" aria-labelledby="titulo-sistema">
+    <h2 id="titulo-sistema" class="font-titulo text-2xl font-extrabold">Como este sistema ajuda</h2>
+    <p>
+      Antes, a fila e as peças eram controladas no papel e na memória. O sistema organiza o caminho de cada cão
+      até a cadeira:
+    </p>
+    <ol class="flex flex-col gap-3">
+      @for (passo of passos; track passo.rota; let i = $index) {
+        <li class="flex gap-4 rounded-2xl border-2 border-stone-300 bg-white p-4">
+          <span
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-800 font-titulo text-xl font-extrabold text-white"
+            aria-hidden="true"
+            >{{ i + 1 }}</span
+          >
+          <div class="flex flex-1 flex-col gap-2">
+            <h3 class="font-titulo text-xl font-extrabold">{{ passo.titulo }}</h3>
+            <p class="text-base leading-relaxed">{{ passo.texto }}</p>
+            <a
+              [routerLink]="passo.rota"
+              class="inline-flex min-h-[44px] min-w-[44px] items-center gap-1 self-start rounded-lg px-1 text-base font-bold text-green-900 underline underline-offset-4 hover:bg-green-50"
+            >
+              {{ passo.acao }}
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </a>
+          </div>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <!-- Quem usa -->
+  <section class="flex flex-col gap-3" aria-labelledby="titulo-voluntarios">
+    <h2 id="titulo-voluntarios" class="font-titulo text-2xl font-extrabold">Feito para quem monta</h2>
+    <p>
+      Quem usa o sistema são voluntários que montam as cadeiras em mutirões, muitas vezes em pátios abertos, em
+      pé e com o celular na mão. Por isso os botões são grandes, as letras são maiores e o contraste é alto
+      para dar para ler sob o sol. Os avisos nunca dependem só da cor: trazem ícone e texto claro, e o sistema
+      também funciona com leitor de tela e só pelo teclado.
+    </p>
+  </section>
+
+  <!-- ODS -->
+  <section class="rounded-2xl border-2 border-sky-300 bg-sky-50 p-5" aria-labelledby="titulo-ods">
+    <h2 id="titulo-ods" class="font-titulo text-xl font-extrabold text-sky-950">Consumo responsável (ODS 12)</h2>
+    <p class="mt-2 text-sky-950">
+      Cada cadeira reaproveita canos e peças que iriam para o lixo. Com o estoque em ordem, nenhuma doação se
+      perde e nada é comprado à toa. O projeto apoia o Objetivo de Desenvolvimento Sustentável 12 da ONU,
+      principalmente as metas 12.2 (uso eficiente dos recursos) e 12.5 (reduzir resíduos com reciclagem e
+      reúso).
+    </p>
+  </section>
+
+  <!-- Aviso e créditos -->
+  <footer class="flex flex-col gap-4 border-t-2 border-stone-300 pt-6 text-base">
+    <p class="flex items-start gap-2">
+      <svg class="mt-0.5 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+      </svg>
+      <span>
+        Este sistema é um projeto acadêmico de Análise e Desenvolvimento de Sistemas. Os cães, tutores e
+        telefones que aparecem como exemplo são fictícios.
+      </span>
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a
+        routerLink="/fila"
+        class="inline-flex min-h-[52px] min-w-[44px] items-center justify-center rounded-xl bg-green-800 px-5 font-bold text-white hover:bg-green-900"
+      >
+        Ver a fila de espera
+      </a>
+      <a
+        [href]="repositorio"
+        target="_blank"
+        rel="noopener"
+        class="inline-flex min-h-[52px] min-w-[44px] items-center justify-center gap-2 rounded-xl border-2 border-green-800 px-5 font-bold text-green-900 hover:bg-green-50"
+      >
+        Ver o código no GitHub
+        <span class="sr-only">(abre em nova aba)</span>
+      </a>
+    </div>
+  </footer>
+</article>
