@@ -1,6 +1,10 @@
 # Cão Saci — MVP
 
 [![Testes](https://github.com/rhangai/ads-projeto-software/actions/workflows/testes.yml/badge.svg)](https://github.com/rhangai/ads-projeto-software/actions/workflows/testes.yml)
+[![Publicar demo](https://github.com/rhangai/ads-projeto-software/actions/workflows/pages.yml/badge.svg)](https://github.com/rhangai/ads-projeto-software/actions/workflows/pages.yml)
+
+**Experimente a demonstração:** https://rhangai.github.io/ads-projeto-software/ (roda só no navegador,
+com dados de exemplo; não precisa de servidor).
 
 Gestão da fila de cães que aguardam cadeira de rodas de PVC, do estoque de peças e da triagem
 (quem da fila já pode receber a cadeira com o material disponível).
@@ -81,8 +85,13 @@ A regra de consumo do mock fica em `frontend/src/app/mock/regra-consumo.ts`, uma
 backend. O `pnpm test` compara as duas em toda a faixa de medidas e em 300 filas sorteadas, e
 falha se alguém mudar uma sem mudar a outra.
 
-Para publicar o `build:mock` (GitHub Pages, Netlify, Vercel…), configure o host para devolver o
-`index.html` em qualquer rota (fallback de SPA). Sem isso, recarregar em `/estoque` dá 404.
+**GitHub Pages:** o workflow `.github/workflows/pages.yml` publica a demonstração a cada push no
+`main` (ou na mão, pela aba Actions). Ele usa `pnpm build:pages`, que gera o site para a subpasta
+`/ads-projeto-software/` e copia o `index.html` para `404.html`, para recarregar numa rota como
+`/estoque` continuar abrindo o app.
+
+Para publicar em outro host (Netlify, Vercel…), use `pnpm build:mock` e configure o host para
+devolver o `index.html` em qualquer rota (fallback de SPA).
 
 ## API
 

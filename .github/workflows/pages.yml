@@ -1,0 +1,58 @@
+name: Publicar demo
+
+# Publica o modo demonstração (sem backend, dados no localStorage do navegador)
+# em https://rhangai.github.io/ads-projeto-software/
+on:
+  push:
+    branches: [main]
+  # Permite publicar na mão pela aba Actions ("Run workflow").
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Uma publicação por vez; a mais nova não cancela a que já está em andamento.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build do modo demonstração
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Instalar dependências
+        run: pnpm install --frozen-lockfile
+
+      # base-href /ads-projeto-software/ e 404.html (cópia do index) para as rotas do Angular.
+      - name: Build para o GitHub Pages
+        run: pnpm build:pages
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist/cao-saci-web/browser
+
+  deploy:
+    name: Publicar no GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publicacao.outputs.page_url }}
+    steps:
+      - id: publicacao
+        uses: actions/deploy-pages@v4

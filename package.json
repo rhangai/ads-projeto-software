@@ -8,6 +8,7 @@
     "dev:mock": "pnpm --filter cao-saci-web dev:mock",
     "build": "pnpm --recursive run build",
     "build:mock": "pnpm --filter cao-saci-web build:mock",
+    "build:pages": "pnpm --filter cao-saci-web build:pages",
     "typecheck": "pnpm --recursive run typecheck",
     "test": "pnpm --recursive run test",
     "test:coverage": "pnpm --recursive run test:coverage && node scripts/cobertura-total.mjs",

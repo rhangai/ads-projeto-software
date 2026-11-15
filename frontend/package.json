@@ -9,6 +9,7 @@
     "build": "ng build",
     "dev:mock": "ng serve --configuration mock",
     "build:mock": "ng build --configuration production,mock",
+    "build:pages": "ng build --configuration production,mock --base-href /ads-projeto-software/ && node -e \"require('fs').copyFileSync('dist/cao-saci-web/browser/index.html','dist/cao-saci-web/browser/404.html')\"",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "test": "ng test --watch=false",
     "test:coverage": "ng test --watch=false --code-coverage"
