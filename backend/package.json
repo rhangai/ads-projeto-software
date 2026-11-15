@@ -11,13 +11,15 @@
     "db:seed": "tsx src/db/seed.ts",
     "db:setup": "pnpm db:migrate && pnpm db:seed",
     "db:reset": "tsx src/db/reset.ts && pnpm db:setup",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test \"src/**/*.test.ts\""
   },
   "dependencies": {
     "better-sqlite3": "^12.2.0",
     "cors": "^2.8.5",
     "drizzle-orm": "^0.44.0",
     "express": "^5.1.0",
+    "helmet": "^8.3.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {

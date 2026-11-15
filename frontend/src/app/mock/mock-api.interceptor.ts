@@ -3,6 +3,7 @@
 // Os dados ficam salvos no localStorage do navegador; restaurarDadosExemplo() recomeça.
 import { HttpErrorResponse, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { switchMap, throwError, of, timer } from 'rxjs';
+import { Consumo, calcularConsumo, cruzarCompatibilidade } from './regra-consumo';
 
 type Status = 'aguardando' | 'em_montagem' | 'entregue';
 
@@ -21,11 +22,6 @@ interface Material {
   nome_material: string;
   categoria_material: 'cano_pvc' | 'roda' | 'conector' | 'outro';
   saldo_disponivel: number;
-}
-
-interface Consumo {
-  canos_pvc: number;
-  rodas: number;
 }
 
 /** Atraso artificial para os estados "Verificando…" e "Salvando…" aparecerem. */
@@ -124,7 +120,7 @@ function rotear(req: HttpRequest<unknown>): { status: number; body: unknown } {
   if (rota === 'POST /caes') return { status: 201, body: cadastrar(req.body) };
   if ((m = rota.match(/^POST \/caes\/(\d+)\/aprovar$/))) return ok(aprovar(Number(m[1])));
   if (rota === 'GET /estoque') return ok(estado.estoque);
-  if ((m = rota.match(/^PUT \/estoque\/(\d+)$/))) return ok(ajustarSaldo(Number(m[1]), req.body));
+  if ((m = rota.match(/^PATCH \/estoque\/(\d+)$/))) return ok(ajustarSaldo(Number(m[1]), req.body));
   if (rota === 'GET /compatibilidade') return ok(compatibilidade());
 
   throw new ErroApi(404, 'Rota não encontrada.');
@@ -132,11 +128,7 @@ function rotear(req: HttpRequest<unknown>): { status: number; body: unknown } {
 
 const ok = (body: unknown) => ({ status: 200, body });
 
-// ---- Regras: manter em sincronia com backend/src/models/compatibilidade.ts ----
-
-function calcularConsumo(alturaCm: number, comprimentoCm: number): Consumo {
-  return { canos_pvc: Math.ceil((2 * comprimentoCm + 4 * alturaCm) / 100), rodas: 4 };
-}
+// ---- Regras (a de consumo vem de regra-consumo.ts, coberta por teste de sincronia) ----
 
 function saldo(): Consumo {
   const soma = (cat: Material['categoria_material']) =>
@@ -145,24 +137,19 @@ function saldo(): Consumo {
 }
 
 function compatibilidade() {
-  const saldoAtual = saldo();
-  const restante = { ...saldoAtual };
-  const aptos = [];
-  for (const cao of estado.caes.filter((c) => c.status === 'aguardando')) {
-    const consumo = calcularConsumo(cao.altura_cm, cao.comprimento_cm);
-    if (consumo.canos_pvc <= restante.canos_pvc && consumo.rodas <= restante.rodas) {
-      aptos.push({ ...cao, consumo });
-      restante.canos_pvc -= consumo.canos_pvc;
-      restante.rodas -= consumo.rodas;
-    }
-  }
-  return { aptos, saldo_atual: saldoAtual, saldo_apos_aptos: restante };
+  return cruzarCompatibilidade(
+    estado.caes.filter((c) => c.status === 'aguardando'),
+    saldo(),
+  );
 }
 
 function cadastrar(corpo: unknown): Cao {
   const d = (corpo ?? {}) as Partial<Cao>;
+  // Mesmas regras da API (backend/src/controllers/caes.controller.ts), em versão simplificada.
   const texto = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
-  const inteiro = (v: unknown) => (Number.isInteger(Number(v)) ? Number(v) : NaN);
+  const inteiro = (v: unknown) => (typeof v === 'number' && Number.isInteger(v) ? v : NaN);
+  const nomeOk = (v: string) => v.length >= 1 && v.length <= 60 && !/[\u0000-\u001F\u007F]/.test(v);
+  const telefoneOk = (v: string) => /^[0-9()+\-.\s]{1,20}$/.test(v) && /^\d{10,13}$/.test(v.replace(/\D/g, ''));
 
   const novo: Cao = {
     id: Math.max(0, ...estado.caes.map((c) => c.id)) + 1,
@@ -175,9 +162,9 @@ function cadastrar(corpo: unknown): Cao {
   };
 
   const erros = [
-    !novo.nome_cao && 'Informe o nome do cão.',
-    !novo.nome_tutor && 'Informe o nome do tutor.',
-    novo.telefone_tutor.length < 8 && 'Informe um telefone válido.',
+    !nomeOk(novo.nome_cao) && 'Informe o nome do cão (até 60 caracteres).',
+    !nomeOk(novo.nome_tutor) && 'Informe o nome do tutor (até 60 caracteres).',
+    !telefoneOk(novo.telefone_tutor) && 'Informe o telefone com DDD.',
     !(novo.altura_cm >= 5 && novo.altura_cm <= 150) && 'Altura entre 5 e 150 cm.',
     !(novo.comprimento_cm >= 10 && novo.comprimento_cm <= 200) && 'Comprimento entre 10 e 200 cm.',
   ].filter(Boolean);
@@ -214,14 +201,15 @@ function debitar(categoria: Material['categoria_material'], quantidade: number):
 }
 
 function ajustarSaldo(id: number, corpo: unknown): Material {
-  const valor = (corpo as { saldo_disponivel?: unknown } | null)?.saldo_disponivel;
-  if (typeof valor !== 'number' || !Number.isInteger(valor)) {
-    throw new ErroApi(400, 'O saldo deve ser um número inteiro.');
+  const delta = (corpo as { delta?: unknown } | null)?.delta;
+  if (typeof delta !== 'number' || !Number.isInteger(delta)) {
+    throw new ErroApi(400, 'A variação deve ser um número inteiro.');
   }
-  if (valor < 0) throw new ErroApi(422, 'O saldo não pode ficar negativo.');
+  if (delta === 0) throw new ErroApi(400, 'A variação não pode ser zero.');
 
   const material = estado.estoque.find((m) => m.id === id);
   if (!material) throw new ErroApi(404, 'Material não encontrado.');
-  material.saldo_disponivel = valor;
+  if (material.saldo_disponivel + delta < 0) throw new ErroApi(422, 'O saldo não pode ficar negativo.');
+  material.saldo_disponivel += delta;
   return material;
 }

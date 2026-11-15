@@ -24,8 +24,9 @@ export class ApiService {
     return this.http.get<MaterialEstoque[]>(`${this.base}/estoque`);
   }
 
-  atualizarSaldo(id: number, saldo_disponivel: number): Observable<MaterialEstoque> {
-    return this.http.put<MaterialEstoque>(`${this.base}/estoque/${id}`, { saldo_disponivel });
+  /** Envia a variação (+ entrada, − saída), não o saldo final: evita sobrescrever ajustes simultâneos. */
+  ajustarSaldo(id: number, delta: number): Observable<MaterialEstoque> {
+    return this.http.patch<MaterialEstoque>(`${this.base}/estoque/${id}`, { delta });
   }
 
   verificarCompatibilidade(): Observable<ResultadoCompatibilidade> {

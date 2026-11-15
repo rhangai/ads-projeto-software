@@ -80,7 +80,8 @@ export class EstoqueComponent implements OnInit {
     if (alterados.length === 0) return;
 
     this.salvando.set(true);
-    forkJoin(alterados.map((m) => this.api.atualizarSaldo(m.id, this.saldo(m)))).subscribe({
+    // Manda só a diferença em relação ao saldo carregado; o servidor soma ao valor atual dele.
+    forkJoin(alterados.map((m) => this.api.ajustarSaldo(m.id, this.saldo(m) - m.saldo_disponivel))).subscribe({
       next: (atualizados) => {
         const porId = new Map(atualizados.map((a) => [a.id, a]));
         this.materiais.update((lista) => lista.map((m) => porId.get(m.id) ?? m));

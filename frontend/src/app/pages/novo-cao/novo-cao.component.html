@@ -28,6 +28,7 @@
       <input
         id="nome_cao"
         formControlName="nome_cao"
+        maxlength="60"
         autocomplete="off"
         class="min-h-[52px] rounded-xl border-2 border-stone-600 bg-white px-4 text-lg text-tinta focus:border-green-800"
         [class.!border-red-800]="invalido('nome_cao')"
@@ -99,6 +100,7 @@
       <input
         id="nome_tutor"
         formControlName="nome_tutor"
+        maxlength="60"
         autocomplete="name"
         class="min-h-[52px] rounded-xl border-2 border-stone-600 bg-white px-4 text-lg text-tinta focus:border-green-800"
         [class.!border-red-800]="invalido('nome_tutor')"
@@ -122,6 +124,7 @@
         autocomplete="tel"
         placeholder="Ex.: (11) 90000-0000"
         formControlName="telefone_tutor"
+        maxlength="20"
         class="min-h-[52px] rounded-xl border-2 border-stone-600 bg-white px-4 text-lg text-tinta placeholder:text-stone-600 focus:border-green-800"
         [class.!border-red-800]="invalido('telefone_tutor')"
         [attr.aria-invalid]="invalido('telefone_tutor')"
