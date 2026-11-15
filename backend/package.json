@@ -11,7 +11,8 @@
     "db:seed": "tsx src/db/seed.ts",
     "db:setup": "pnpm db:migrate && pnpm db:seed",
     "db:reset": "tsx src/db/reset.ts && pnpm db:setup",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test \"src/**/*.test.ts\""
   },
   "dependencies": {
     "better-sqlite3": "^12.2.0",

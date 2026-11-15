@@ -52,8 +52,9 @@ todas as chamadas `/api` no próprio navegador, com as mesmas regras e mensagens
 Os dados ficam no `localStorage` (chave `cao-saci:mock:v1`) e o botão "Restaurar dados de
 exemplo", na faixa amarela do topo, recomeça do zero.
 
-A regra de consumo está copiada no interceptor: se mudar em
-`backend/src/models/compatibilidade.ts`, mude lá também.
+A regra de consumo do mock fica em `frontend/src/app/mock/regra-consumo.ts`, uma cópia da do
+backend. O `pnpm test` compara as duas em toda a faixa de medidas e em 300 filas sorteadas, e
+falha se alguém mudar uma sem mudar a outra.
 
 Para publicar o `build:mock` (GitHub Pages, Netlify, Vercel…), configure o host para devolver o
 `index.html` em qualquer rota (fallback de SPA). Sem isso, recarregar em `/estoque` dá 404.

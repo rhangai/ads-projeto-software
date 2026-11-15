@@ -3,6 +3,7 @@
 // Os dados ficam salvos no localStorage do navegador; restaurarDadosExemplo() recomeça.
 import { HttpErrorResponse, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { switchMap, throwError, of, timer } from 'rxjs';
+import { Consumo, calcularConsumo, cruzarCompatibilidade } from './regra-consumo';
 
 type Status = 'aguardando' | 'em_montagem' | 'entregue';
 
@@ -21,11 +22,6 @@ interface Material {
   nome_material: string;
   categoria_material: 'cano_pvc' | 'roda' | 'conector' | 'outro';
   saldo_disponivel: number;
-}
-
-interface Consumo {
-  canos_pvc: number;
-  rodas: number;
 }
 
 /** Atraso artificial para os estados "Verificando…" e "Salvando…" aparecerem. */
@@ -132,11 +128,7 @@ function rotear(req: HttpRequest<unknown>): { status: number; body: unknown } {
 
 const ok = (body: unknown) => ({ status: 200, body });
 
-// ---- Regras: manter em sincronia com backend/src/models/compatibilidade.ts ----
-
-function calcularConsumo(alturaCm: number, comprimentoCm: number): Consumo {
-  return { canos_pvc: Math.ceil((2 * comprimentoCm + 4 * alturaCm) / 100), rodas: 4 };
-}
+// ---- Regras (a de consumo vem de regra-consumo.ts, coberta por teste de sincronia) ----
 
 function saldo(): Consumo {
   const soma = (cat: Material['categoria_material']) =>
@@ -145,18 +137,10 @@ function saldo(): Consumo {
 }
 
 function compatibilidade() {
-  const saldoAtual = saldo();
-  const restante = { ...saldoAtual };
-  const aptos = [];
-  for (const cao of estado.caes.filter((c) => c.status === 'aguardando')) {
-    const consumo = calcularConsumo(cao.altura_cm, cao.comprimento_cm);
-    if (consumo.canos_pvc <= restante.canos_pvc && consumo.rodas <= restante.rodas) {
-      aptos.push({ ...cao, consumo });
-      restante.canos_pvc -= consumo.canos_pvc;
-      restante.rodas -= consumo.rodas;
-    }
-  }
-  return { aptos, saldo_atual: saldoAtual, saldo_apos_aptos: restante };
+  return cruzarCompatibilidade(
+    estado.caes.filter((c) => c.status === 'aguardando'),
+    saldo(),
+  );
 }
 
 function cadastrar(corpo: unknown): Cao {
