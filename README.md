@@ -85,6 +85,24 @@ O cruzamento segue a ordem de chegada e reserva o material em memória: dois cã
 declarados aptos com as mesmas peças. Quem não cabe é pulado e o próximo ainda é avaliado.
 Os valores precisam ser validados com a equipe de montagem.
 
+## Segurança: o que já existe e o que falta
+
+Já existe:
+- **Validação estrita na entrada** (zod): tipos exatos, sem conversão automática; nomes com até
+  60 caracteres e sem caracteres de controle; telefone só com dígitos e pontuação; campos extras
+  recusados.
+- **SQL parametrizado** pelo Drizzle; nenhum valor do usuário é concatenado em SQL.
+- **Escape automático de HTML** nos templates do Angular (interpolação `{{ }}`), contra XSS.
+- **Cabeçalhos de segurança** com `helmet` e corpo limitado a 10 KB.
+- **Erros previsíveis**: JSON malformado → 400; corpo grande → 413; detalhes de erro inesperado
+  só no log do servidor.
+
+Falta (dívida técnica conhecida):
+- **Autenticação dos voluntários.** Hoje qualquer pessoa que alcance a API pode alterar o estoque e
+  ver o telefone dos tutores, que é dado pessoal (LGPD). Antes de publicar fora da rede local, é
+  preciso login e controle de acesso.
+- **Limite de requisições por IP** (rate limiting).
+
 ## Saldo nunca negativo — três barreiras
 
 1. Front: os botões "−" e o campo de quantidade bloqueiam e mostram o alerta.

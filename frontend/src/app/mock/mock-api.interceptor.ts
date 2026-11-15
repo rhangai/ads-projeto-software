@@ -145,8 +145,11 @@ function compatibilidade() {
 
 function cadastrar(corpo: unknown): Cao {
   const d = (corpo ?? {}) as Partial<Cao>;
+  // Mesmas regras da API (backend/src/controllers/caes.controller.ts), em versão simplificada.
   const texto = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
-  const inteiro = (v: unknown) => (Number.isInteger(Number(v)) ? Number(v) : NaN);
+  const inteiro = (v: unknown) => (typeof v === 'number' && Number.isInteger(v) ? v : NaN);
+  const nomeOk = (v: string) => v.length >= 1 && v.length <= 60 && !/[\u0000-\u001F\u007F]/.test(v);
+  const telefoneOk = (v: string) => /^[0-9()+\-.\s]{1,20}$/.test(v) && /^\d{10,13}$/.test(v.replace(/\D/g, ''));
 
   const novo: Cao = {
     id: Math.max(0, ...estado.caes.map((c) => c.id)) + 1,
@@ -159,9 +162,9 @@ function cadastrar(corpo: unknown): Cao {
   };
 
   const erros = [
-    !novo.nome_cao && 'Informe o nome do cão.',
-    !novo.nome_tutor && 'Informe o nome do tutor.',
-    novo.telefone_tutor.length < 8 && 'Informe um telefone válido.',
+    !nomeOk(novo.nome_cao) && 'Informe o nome do cão (até 60 caracteres).',
+    !nomeOk(novo.nome_tutor) && 'Informe o nome do tutor (até 60 caracteres).',
+    !telefoneOk(novo.telefone_tutor) && 'Informe o telefone com DDD.',
     !(novo.altura_cm >= 5 && novo.altura_cm <= 150) && 'Altura entre 5 e 150 cm.',
     !(novo.comprimento_cm >= 10 && novo.comprimento_cm <= 200) && 'Comprimento entre 10 e 200 cm.',
   ].filter(Boolean);

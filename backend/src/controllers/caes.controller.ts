@@ -8,24 +8,47 @@ import { HttpError } from '../http-error';
 import { calcularConsumo } from '../models/compatibilidade';
 import { debitarCategoria, saldoParaCadeiras } from '../models/estoque.repository';
 
-const novoCaoSchema = z.object({
-  nome_cao: z.string({ required_error: 'Informe o nome do cão.' }).trim().min(1, 'Informe o nome do cão.'),
-  nome_tutor: z.string({ required_error: 'Informe o nome do tutor.' }).trim().min(1, 'Informe o nome do tutor.'),
-  telefone_tutor: z
-    .string({ required_error: 'Informe o telefone do tutor.' })
+// Limites e formatos: mantenha iguais aos do formulário (novo-cao.component.ts) e do mock.
+export const LIMITES = { nome: 60, telefone: 20 } as const;
+
+/** Nome: tamanho limitado e sem caracteres de controle (quebras de linha, NUL etc.). */
+const nome = (rotulo: string) =>
+  z
+    .string({ required_error: `Informe o nome do ${rotulo}.`, invalid_type_error: `O nome do ${rotulo} deve ser texto.` })
     .trim()
-    .min(8, 'Informe um telefone válido.'),
-  altura_cm: z.coerce
-    .number({ invalid_type_error: 'Informe a altura em cm.' })
-    .int('A altura deve ser em cm inteiros.')
-    .min(5, 'Altura mínima: 5 cm.')
-    .max(150, 'Altura máxima: 150 cm.'),
-  comprimento_cm: z.coerce
-    .number({ invalid_type_error: 'Informe o comprimento em cm.' })
-    .int('O comprimento deve ser em cm inteiros.')
-    .min(10, 'Comprimento mínimo: 10 cm.')
-    .max(200, 'Comprimento máximo: 200 cm.'),
-});
+    .min(1, `Informe o nome do ${rotulo}.`)
+    .max(LIMITES.nome, `O nome do ${rotulo} pode ter até ${LIMITES.nome} caracteres.`)
+    // eslint-disable-next-line no-control-regex
+    .refine((v) => !/[\u0000-\u001F\u007F]/.test(v), `O nome do ${rotulo} tem caracteres inválidos.`);
+
+const novoCaoSchema = z
+  .object({
+    nome_cao: nome('cão'),
+    nome_tutor: nome('tutor'),
+    telefone_tutor: z
+      .string({ required_error: 'Informe o telefone do tutor.', invalid_type_error: 'O telefone deve ser texto.' })
+      .trim()
+      .max(LIMITES.telefone, 'Telefone longo demais.')
+      // Só dígitos e a pontuação usual de telefone; entre 10 e 13 dígitos (DDD + número, com ou sem +55).
+      .refine((v) => /^[0-9()+\-.\s]+$/.test(v), 'O telefone só pode ter números, espaços, parênteses, + e -.')
+      .refine((v) => {
+        const digitos = v.replace(/\D/g, '').length;
+        return digitos >= 10 && digitos <= 13;
+      }, 'Informe o telefone com DDD.'),
+    // z.number() estrito (sem coerce): "40", true ou [40] são recusados em vez de convertidos.
+    altura_cm: z
+      .number({ required_error: 'Informe a altura em cm.', invalid_type_error: 'A altura deve ser um número.' })
+      .int('A altura deve ser em cm inteiros.')
+      .min(5, 'Altura mínima: 5 cm.')
+      .max(150, 'Altura máxima: 150 cm.'),
+    comprimento_cm: z
+      .number({ required_error: 'Informe o comprimento em cm.', invalid_type_error: 'O comprimento deve ser um número.' })
+      .int('O comprimento deve ser em cm inteiros.')
+      .min(10, 'Comprimento mínimo: 10 cm.')
+      .max(200, 'Comprimento máximo: 200 cm.'),
+  })
+  // Campos a mais (ex.: "status": "entregue") são recusados, não ignorados em silêncio.
+  .strict('Campo não esperado no cadastro.');
 
 const idSchema = z.coerce.number().int().positive('Id inválido.');
 const statusSchema = z.enum(STATUS_CAO).optional();

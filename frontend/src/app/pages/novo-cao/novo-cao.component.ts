@@ -19,10 +19,12 @@ export class NovoCaoComponent {
 
   readonly enviando = signal(false);
 
+  // Mesmos limites da API (backend/src/controllers/caes.controller.ts): a API é quem garante,
+  // o formulário só avisa antes de enviar.
   readonly form = this.fb.group({
-    nome_cao: ['', [Validators.required]],
-    nome_tutor: ['', [Validators.required]],
-    telefone_tutor: ['', [Validators.required, Validators.minLength(8)]],
+    nome_cao: ['', [Validators.required, Validators.maxLength(60)]],
+    nome_tutor: ['', [Validators.required, Validators.maxLength(60)]],
+    telefone_tutor: ['', [Validators.required, Validators.maxLength(20), Validators.pattern(/^[0-9()+\-.\s]{10,20}$/)]],
     // Começam vazios (null) para não exibir um "0" que confunde quem está preenchendo.
     altura_cm: this.fb.control<number | null>(null, [Validators.required, Validators.min(5), Validators.max(150)]),
     comprimento_cm: this.fb.control<number | null>(null, [
