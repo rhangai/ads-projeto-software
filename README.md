@@ -45,6 +45,24 @@ dispositivo do DevTools para ver em tela cheia.
 Para rodar um pacote só: `pnpm --filter cao-saci-api dev` ou `pnpm --filter cao-saci-web dev`.
 O banco fica em `backend/cao-saci.db` (mude com a variável `DB_FILE`).
 
+## Testes
+
+```bash
+pnpm test             # API (Vitest) + front (Karma/Jasmine)
+pnpm test:coverage    # o mesmo, com cobertura por pacote e o total do projeto
+```
+
+| Pacote | Ferramenta | O que cobre |
+| --- | --- | --- |
+| API | Vitest + Supertest | **Unitários**: regra de consumo, sincronia com o mock, middleware de erros, repositório de estoque. **Integração**: todas as rotas HTTP de ponta a ponta contra SQLite em memória com as migrations reais. |
+| Front | Karma + Jasmine | Serviços, interceptor do modo demonstração, as telas (fila, cadastro, triagem, estoque), toast, etiquetas de status, logo e rotas. |
+
+Os relatórios em HTML ficam em `backend/coverage/index.html` e `frontend/coverage/index.html`.
+O front precisa de Chrome ou Chromium; se o Karma não achar, informe o executável em `CHROME_BIN`.
+
+Ficam fora da medição só os pontos de entrada e scripts sem lógica própria (`server.ts`,
+`main.ts`, scripts de banco, `environment.mock.ts`) e os ajudantes de teste.
+
 ## Modo demonstração (sem backend)
 
 `pnpm dev:mock` liga o interceptor `frontend/src/app/mock/mock-api.interceptor.ts`, que responde
