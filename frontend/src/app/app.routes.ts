@@ -22,5 +22,10 @@ export const routes: Routes = [
     title: 'Estoque físico · Cão Saci',
     loadComponent: () => import('./pages/estoque/estoque.component').then((m) => m.EstoqueComponent),
   },
+  {
+    path: 'sobre',
+    title: 'Sobre · Cão Saci',
+    loadComponent: () => import('./pages/sobre/sobre.component').then((m) => m.SobreComponent),
+  },
   { path: '**', redirectTo: 'fila' },
 ];
