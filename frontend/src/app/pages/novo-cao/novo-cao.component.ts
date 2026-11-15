@@ -1,9 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService, mensagemDeErro } from '../../core/api.service';
 import { NovoCao } from '../../core/models';
 import { ToastService } from '../../core/toast.service';
+
+/**
+ * Mesma regra da API: só dígitos e pontuação de telefone, com 10 a 13 dígitos
+ * (DDD + número, com ou sem +55). Conta dígitos, não caracteres.
+ */
+export function telefoneComDdd(controle: AbstractControl<string>): ValidationErrors | null {
+  const v = controle.value ?? '';
+  if (!v) return null; // "required" cuida do vazio
+  const digitos = v.replace(/\D/g, '').length;
+  return /^[0-9()+\-.\s]+$/.test(v) && digitos >= 10 && digitos <= 13 ? null : { telefone: true };
+}
 
 @Component({
   selector: 'app-novo-cao',
@@ -24,7 +35,7 @@ export class NovoCaoComponent {
   readonly form = this.fb.group({
     nome_cao: ['', [Validators.required, Validators.maxLength(60)]],
     nome_tutor: ['', [Validators.required, Validators.maxLength(60)]],
-    telefone_tutor: ['', [Validators.required, Validators.maxLength(20), Validators.pattern(/^[0-9()+\-.\s]{10,20}$/)]],
+    telefone_tutor: ['', [Validators.required, Validators.maxLength(20), telefoneComDdd]],
     // Começam vazios (null) para não exibir um "0" que confunde quem está preenchendo.
     altura_cm: this.fb.control<number | null>(null, [Validators.required, Validators.min(5), Validators.max(150)]),
     comprimento_cm: this.fb.control<number | null>(null, [

@@ -1,9 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, InjectionToken, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { environment } from '../environments/environment';
 import { restaurarDadosExemplo } from './mock/mock-api.interceptor';
 import { LogoComponent } from './shared/logo/logo.component';
 import { ToastComponent } from './shared/toast/toast.component';
+
+/** Recarrega a página. Injetável para os testes trocarem por um dublê (location.reload não pode ser espionado). */
+export const RECARREGAR_PAGINA = new InjectionToken<() => void>('RECARREGAR_PAGINA', {
+  providedIn: 'root',
+  factory: () => () => location.reload(),
+});
 
 interface ItemNav {
   rota: string;
@@ -19,11 +25,12 @@ interface ItemNav {
 })
 export class AppComponent {
   readonly modoMock = environment.mock;
+  private readonly recarregar = inject(RECARREGAR_PAGINA);
 
   /** Só no modo mock: recomeça com os dados de exemplo e recarrega as telas. */
   restaurarExemplo(): void {
     restaurarDadosExemplo();
-    location.reload();
+    this.recarregar();
   }
 
   readonly navegacao: ItemNav[] = [

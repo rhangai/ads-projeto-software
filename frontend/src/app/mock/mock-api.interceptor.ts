@@ -114,7 +114,8 @@ function rotear(req: HttpRequest<unknown>): { status: number; body: unknown } {
   let m: RegExpMatchArray | null;
 
   if (rota === 'GET /caes') {
-    const status = req.params.get('status');
+    // O filtro pode vir em HttpParams ou escrito na própria URL (?status=...), como a API aceita.
+    const status = req.params.get('status') ?? new URLSearchParams(req.url.split('?')[1] ?? '').get('status');
     return ok(status ? estado.caes.filter((c) => c.status === status) : estado.caes);
   }
   if (rota === 'POST /caes') return { status: 201, body: cadastrar(req.body) };
