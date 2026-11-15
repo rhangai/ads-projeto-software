@@ -12,7 +12,7 @@ router.post('/caes/:id/aprovar', caes.aprovarMontagem);
 
 // Estoque
 router.get('/estoque', estoque.listar);
-router.put('/estoque/:id', estoque.atualizar);
+router.patch('/estoque/:id', estoque.ajustar);
 
 // Cruzamento de dados (não altera o banco)
 router.get('/compatibilidade', compatibilidade.verificar);

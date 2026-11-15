@@ -124,7 +124,7 @@ function rotear(req: HttpRequest<unknown>): { status: number; body: unknown } {
   if (rota === 'POST /caes') return { status: 201, body: cadastrar(req.body) };
   if ((m = rota.match(/^POST \/caes\/(\d+)\/aprovar$/))) return ok(aprovar(Number(m[1])));
   if (rota === 'GET /estoque') return ok(estado.estoque);
-  if ((m = rota.match(/^PUT \/estoque\/(\d+)$/))) return ok(ajustarSaldo(Number(m[1]), req.body));
+  if ((m = rota.match(/^PATCH \/estoque\/(\d+)$/))) return ok(ajustarSaldo(Number(m[1]), req.body));
   if (rota === 'GET /compatibilidade') return ok(compatibilidade());
 
   throw new ErroApi(404, 'Rota não encontrada.');
@@ -214,14 +214,15 @@ function debitar(categoria: Material['categoria_material'], quantidade: number):
 }
 
 function ajustarSaldo(id: number, corpo: unknown): Material {
-  const valor = (corpo as { saldo_disponivel?: unknown } | null)?.saldo_disponivel;
-  if (typeof valor !== 'number' || !Number.isInteger(valor)) {
-    throw new ErroApi(400, 'O saldo deve ser um número inteiro.');
+  const delta = (corpo as { delta?: unknown } | null)?.delta;
+  if (typeof delta !== 'number' || !Number.isInteger(delta)) {
+    throw new ErroApi(400, 'A variação deve ser um número inteiro.');
   }
-  if (valor < 0) throw new ErroApi(422, 'O saldo não pode ficar negativo.');
+  if (delta === 0) throw new ErroApi(400, 'A variação não pode ser zero.');
 
   const material = estado.estoque.find((m) => m.id === id);
   if (!material) throw new ErroApi(404, 'Material não encontrado.');
-  material.saldo_disponivel = valor;
+  if (material.saldo_disponivel + delta < 0) throw new ErroApi(422, 'O saldo não pode ficar negativo.');
+  material.saldo_disponivel += delta;
   return material;
 }

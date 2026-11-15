@@ -66,7 +66,7 @@ Para publicar o `build:mock` (GitHub Pages, Netlify, Vercel…), configure o hos
 | POST | `/api/caes` | Cadastra um cão na fila (status `aguardando`) |
 | POST | `/api/caes/:id/aprovar` | Aprova a montagem: debita o material e muda para `em_montagem` |
 | GET | `/api/estoque` | Lista os materiais |
-| PUT | `/api/estoque/:id` | Define o saldo `{ "saldo_disponivel": 12 }`. Negativo → 422 |
+| PATCH | `/api/estoque/:id` | Soma uma variação ao saldo `{ "delta": 5 }` ou `{ "delta": -2 }`. Se ficaria negativo → 422 |
 | GET | `/api/compatibilidade` | Cruza fila × estoque e devolve os cães aptos. Não altera o banco |
 
 Erros sempre voltam como `{ "erro": "mensagem" }`.
@@ -87,5 +87,6 @@ Os valores precisam ser validados com a equipe de montagem.
 ## Saldo nunca negativo — três barreiras
 
 1. Front: os botões "−" e o campo de quantidade bloqueiam e mostram o alerta.
-2. API: `PUT /api/estoque/:id` responde 422 "O saldo não pode ficar negativo."
+2. API: `PATCH /api/estoque/:id` responde 422 "O saldo não pode ficar negativo." A soma e a
+   checagem acontecem numa única instrução SQL, então ajustes simultâneos não se sobrescrevem.
 3. Banco: `CHECK (saldo_disponivel >= 0)` na tabela `material_estoque`.
