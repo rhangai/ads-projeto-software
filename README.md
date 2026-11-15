@@ -2,6 +2,7 @@
 
 [![Testes](https://github.com/rhangai/ads-projeto-software/actions/workflows/testes.yml/badge.svg)](https://github.com/rhangai/ads-projeto-software/actions/workflows/testes.yml)
 [![Publicar demo](https://github.com/rhangai/ads-projeto-software/actions/workflows/pages.yml/badge.svg)](https://github.com/rhangai/ads-projeto-software/actions/workflows/pages.yml)
+[![Monitoramento](https://github.com/rhangai/ads-projeto-software/actions/workflows/monitoramento.yml/badge.svg)](https://github.com/rhangai/ads-projeto-software/actions/workflows/monitoramento.yml)
 
 **Experimente a demonstração:** https://rhangai.github.io/ads-projeto-software/ (roda só no navegador,
 com dados de exemplo; não precisa de servidor).
@@ -92,6 +93,23 @@ falha se alguém mudar uma sem mudar a outra.
 
 Para publicar em outro host (Netlify, Vercel…), use `pnpm build:mock` e configure o host para
 devolver o `index.html` em qualquer rota (fallback de SPA).
+
+## Monitoramento
+
+O workflow `.github/workflows/monitoramento.yml` verifica a demo a cada 15 minutos (e na mão, pela
+aba Actions). O script `scripts/verificar-site.mjs` confere se a página principal responde e traz o
+app, se o script e os estilos carregam, se uma rota interna abre o app, e se a imagem de prévia e o
+manifest existem. Antes de declarar queda, tenta 3 vezes com 30 s de intervalo.
+
+- **DOWN:** a execução fica vermelha (o GitHub manda e-mail de falha) e abre a issue
+  "Site fora do ar (monitoramento)".
+- **UP de novo:** a issue recebe um comentário e é fechada sozinha.
+- O selo "Monitoramento" no topo deste README mostra o último resultado.
+
+Para rodar na mão: `node scripts/verificar-site.mjs [url]`.
+
+O GitHub roda agendamentos com alguns minutos de atraso quando está sobrecarregado e pausa os
+agendamentos de repositórios sem atividade por 60 dias.
 
 ## API
 

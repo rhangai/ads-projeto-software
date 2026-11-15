@@ -1,0 +1,78 @@
+name: Monitoramento
+
+# Verifica a demo publicada a cada 15 minutos. Se cair (DOWN):
+#   - a execução fica vermelha e o GitHub manda e-mail de falha;
+#   - abre uma issue "Site fora do ar" (uma só, mesmo com várias falhas seguidas).
+# Quando volta (UP), comenta e fecha a issue sozinho.
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: monitoramento
+  cancel-in-progress: false
+
+env:
+  SITE_URL: https://rhangai.github.io/ads-projeto-software/
+  TITULO_ISSUE: 'Site fora do ar (monitoramento)'
+
+jobs:
+  verificar:
+    name: Verificar se a demo está no ar
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # Tenta de novo 2 vezes, com 30 s de intervalo, antes de declarar DOWN (evita alarme falso por oscilação de rede).
+      - name: Verificar site
+        id: verificacao
+        run: |
+          for tentativa in 1 2 3; do
+            if node scripts/verificar-site.mjs; then exit 0; fi
+            [ "$tentativa" -lt 3 ] && echo "Tentativa $tentativa falhou; nova tentativa em 30 s." && sleep 30
+          done
+          exit 1
+
+      - name: Abrir issue de queda
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const titulo = process.env.TITULO_ISSUE;
+            const execucao = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: abertas } = await github.rest.issues.listForRepo({ ...context.repo, state: 'open', per_page: 100 });
+            const existente = abertas.find((i) => i.title === titulo && !i.pull_request);
+            if (existente) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: existente.number, body: `Continua fora do ar. Execução: ${execucao}` });
+            } else {
+              await github.rest.issues.create({
+                ...context.repo,
+                title: titulo,
+                body: `🔴 **DOWN**: ${process.env.SITE_URL} não passou na verificação automática (3 tentativas).\n\nDetalhes da execução: ${execucao}\n\nEsta issue fecha sozinha quando o site voltar.`,
+              });
+            }
+
+      - name: Fechar issue de queda
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const titulo = process.env.TITULO_ISSUE;
+            const execucao = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: abertas } = await github.rest.issues.listForRepo({ ...context.repo, state: 'open', per_page: 100 });
+            for (const issue of abertas.filter((i) => i.title === titulo && !i.pull_request)) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: issue.number, body: `🟢 **UP**: o site voltou. Execução: ${execucao}` });
+              await github.rest.issues.update({ ...context.repo, issue_number: issue.number, state: 'closed', state_reason: 'completed' });
+            }
